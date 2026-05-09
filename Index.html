@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MCQ – Chapters 6, 7 & 8</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@400;600;700&display=swap');
+
+  :root {
+    --bg: #0d0f14;
+    --surface: #141720;
+    --border: #1e2535;
+    --accent: #00e5ff;
+    --accent2: #7b2fff;
+    --correct: #00e676;
+    --wrong: #ff1744;
+    --text: #c9d1e0;
+    --muted: #5a6278;
+    --white: #eef2ff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    min-height: 100vh;
+    padding: 20px;
+    font-size: 16px;
+  }
+
+  .container { max-width: 820px; margin: 0 auto; }
+
+  header {
+    text-align: center;
+    padding: 30px 0 24px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 28px;
+  }
+
+  header h1 {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 1.5rem;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  header p { color: var(--muted); font-size: 0.95rem; margin-top: 6px; }
+
+  /* Chapter tabs */
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+  }
+
+  .tab-btn {
+    flex: 1;
+    min-width: 120px;
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--muted);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all .2s;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+
+  .tab-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .tab-btn.active { background: #00e5ff18; border-color: var(--accent); color: var(--accent); }
+
+  /* Progress */
+  .progress-bar-wrap {
+    background: var(--border);
+    border-radius: 99px;
+    height: 5px;
+    margin-bottom: 22px;
+    overflow: hidden;
+  }
+
+  .progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    border-radius: 99px;
+    transition: width .4s ease;
+  }
+
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 8px;
+    font-family: 'Share Tech Mono', monospace;
+  }
+
+  /* Question card */
+  .question-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 28px;
+    margin-bottom: 20px;
+    animation: fadeIn .25s ease;
+  }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; } }
+
+  .q-number {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--accent);
+    letter-spacing: .08em;
+    margin-bottom: 10px;
+  }
+
+  .q-text {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--white);
+    line-height: 1.5;
+    margin-bottom: 20px;
+  }
+
+  .options { display: flex; flex-direction: column; gap: 10px; }
+
+  .option-btn {
+    background: #1a1f2e;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: 12px 16px;
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1rem;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+    transition: all .18s;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .option-btn:hover:not(:disabled) { border-color: var(--accent); background: #00e5ff0d; color: var(--white); }
+
+  .option-btn .opt-label {
+    background: var(--border);
+    color: var(--muted);
+    border-radius: 4px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.78rem;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all .18s;
+  }
+
+  .option-btn:hover:not(:disabled) .opt-label { background: var(--accent); color: #000; }
+
+  .option-btn.correct { border-color: var(--correct); background: #00e6761a; color: var(--correct); }
+  .option-btn.correct .opt-label { background: var(--correct); color: #000; }
+  .option-btn.wrong { border-color: var(--wrong); background: #ff17441a; color: var(--wrong); }
+  .option-btn.wrong .opt-label { background: var(--wrong); color: #fff; }
+  .option-btn.show-correct { border-color: var(--correct); background: #00e6760d; color: var(--correct); opacity: .7; }
+  .option-btn:disabled { cursor: default; }
+
+  /* Navigation */
+  .nav-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 8px;
+    gap: 12px;
+  }
+
+  .nav-btn {
+    padding: 10px 24px;
+    border-radius: 6px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--muted);
+    transition: all .18s;
+  }
+
+  .nav-btn:hover:not(:disabled) { border-color: var(--accent2); color: var(--accent2); }
+  .nav-btn:disabled { opacity: .3; cursor: default; }
+
+  .nav-btn.primary {
+    background: linear-gradient(135deg, var(--accent2), #00b8d4);
+    border-color: transparent;
+    color: #fff;
+  }
+
+  .nav-btn.primary:hover:not(:disabled) { opacity: .88; }
+
+  /* Score panel */
+  .score-panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 36px 28px;
+    text-align: center;
+    animation: fadeIn .3s ease;
+  }
+
+  .score-panel h2 {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 1.2rem;
+    color: var(--accent);
+    margin-bottom: 16px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+  }
+
+  .score-big {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 3.5rem;
+    font-weight: 700;
+    color: var(--white);
+    line-height: 1;
+  }
+
+  .score-sub { color: var(--muted); font-size: .95rem; margin-top: 8px; }
+
+  .score-grade {
+    margin: 20px auto 0;
+    display: inline-block;
+    padding: 6px 20px;
+    border-radius: 99px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: .1em;
+  }
+
+  .grade-a { background: #00e67622; color: var(--correct); border: 1px solid var(--correct); }
+  .grade-b { background: #00e5ff18; color: var(--accent); border: 1px solid var(--accent); }
+  .grade-c { background: #ffd74018; color: #ffd740; border: 1px solid #ffd740; }
+  .grade-d { background: #ff174418; color: var(--wrong); border: 1px solid var(--wrong); }
+
+  .retry-btn {
+    margin-top: 28px;
+    padding: 12px 36px;
+    background: linear-gradient(135deg, var(--accent2), #00b8d4);
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    transition: opacity .18s;
+  }
+
+  .retry-btn:hover { opacity: .85; }
+
+  /* Chapter tag in Q */
+  .chapter-tag {
+    display: inline-block;
+    background: #7b2fff22;
+    color: var(--accent2);
+    border: 1px solid #7b2fff44;
+    border-radius: 4px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.72rem;
+    padding: 2px 8px;
+    margin-bottom: 10px;
+    letter-spacing: .06em;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>Research Methods MCQ</h1>
+    <p>Chapters 6, 7 & 8 — No answers shown until you select</p>
+  </header>
+
+  <div class="tabs" id="tabs">
+    <button class="tab-btn active" onclick="selectChapter('all')">All Chapters</button>
+    <button class="tab-btn" onclick="selectChapter(6)">Chapter 6</button>
+    <button class="tab-btn" onclick="selectChapter(7)">Chapter 7</button>
+    <button class="tab-btn" onclick="selectChapter(8)">Chapter 8</button>
+  </div>
+
+  <div id="quiz-area"></div>
+</div>
+
+<script>
+const ALL_QUESTIONS = [
+  // ──── CHAPTER 6 ────
+  { ch: 6, q: "What is a research design?", opts: ["A final report of a study","An overall plan that guides data collection, analysis, and interpretation","A list of research participants","A statistical formula"], ans: 1 },
+  { ch: 6, q: "Which component of research design deals with selecting participants or data sources?", opts: ["Data Analysis Methods","Research Objectives","Sampling Techniques","Ethical Considerations"], ans: 2 },
+  { ch: 6, q: "Which type of experimental design is considered the most rigorous?", opts: ["Pre-experimental Design","Quasi-experimental Design","True Experimental Design","Descriptive Design"], ans: 2 },
+  { ch: 6, q: "What distinguishes true experimental design from quasi-experimental design?", opts: ["True experiments are cheaper","True experiments use random assignment","Quasi-experiments use control groups","Quasi-experiments take more time"], ans: 1 },
+  { ch: 6, q: "Which non-experimental design observes the same group over an extended period?", opts: ["Cross-Sectional Study","Case Study","Longitudinal Study","Correlational Research"], ans: 2 },
+  { ch: 6, q: "A cross-sectional study is best described as:", opts: ["Following one group over many years","Studying different groups at one point in time","Manipulating variables in a lab","Observing a single individual in depth"], ans: 1 },
+  { ch: 6, q: "Which research method focuses on collecting non-numerical data to understand complex phenomena?", opts: ["Quantitative Research","Mixed Methods Research","Qualitative Research","Experimental Research"], ans: 2 },
+  { ch: 6, q: "Which approach combines qualitative and quantitative methods in one study?", opts: ["Descriptive Research","Mixed Methods Research","Correlational Research","Longitudinal Research"], ans: 1 },
+  { ch: 6, q: "In quantitative research, data is primarily:", opts: ["Narrative and descriptive","Numerical and statistical","Based on interviews","Collected through observation only"], ans: 1 },
+  { ch: 6, q: "Research design in cybersecurity is important for:", opts: ["Designing attractive websites","Identifying threats and testing security measures","Writing marketing content","Managing social media accounts"], ans: 1 },
+  { ch: 6, q: "A case study is an example of which type of design?", opts: ["Experimental Design","Quantitative Design","Non-experimental Design","True Experimental Design"], ans: 2 },
+  { ch: 6, q: "Which regulation is mentioned as an ethical/legal concern in IT research design?", opts: ["ISO 9001","GDPR","IEEE Standard","PCI-DSS"], ans: 1 },
+  { ch: 6, q: "The goal of mixed methods research is:", opts: ["To avoid statistical analysis","A comprehensive understanding of the research problem","To use only interviews","To study only large populations"], ans: 1 },
+  { ch: 6, q: "What does internal validity mean in experimental research?", opts: ["The study can be generalized to all populations","The results accurately reflect cause-and-effect within the study","The sample size is very large","The questionnaire is well-formatted"], ans: 1 },
+  { ch: 6, q: "Pre-experimental design is considered:", opts: ["The most rigorous type","A simple research approach without comparison groups","Always superior to quasi-experimental","Used only in medical research"], ans: 1 },
+
+  // ──── CHAPTER 7 ────
+  { ch: 7, q: "Primary data is best defined as:", opts: ["Data collected by someone else previously","Data that has been statistically processed","Data collected fresh for the first time","Data from government publications"], ans: 2 },
+  { ch: 7, q: "Which of the following is a method of collecting primary data?", opts: ["Reading published reports","Using government statistics","Conducting interviews","Reviewing historical documents"], ans: 2 },
+  { ch: 7, q: "What is a key advantage of the observation method?", opts: ["It is very inexpensive","Subjective bias is eliminated","It provides unlimited information","It can be done only online"], ans: 1 },
+  { ch: 7, q: "Which is a disadvantage of the observation method?", opts: ["Researcher gets outdated information","It is expensive and time consuming","Respondents are always cooperative","It produces biased results only"], ans: 1 },
+  { ch: 7, q: "In a structured interview, questions are:", opts: ["Changed freely by the interviewer","Predetermined and asked in a fixed order","Created during the interview","Optional for the respondent"], ans: 1 },
+  { ch: 7, q: "Unstructured interviews are most useful in:", opts: ["Descriptive studies requiring generalization","Exploratory or formulative research studies","Large-scale government surveys","Quantitative statistical research"], ans: 1 },
+  { ch: 7, q: "Which question type in an interview introduces the general topic to stimulate discussion?", opts: ["Key questions","Opening questions","Introductory questions","Ending questions"], ans: 2 },
+  { ch: 7, q: "Which of the following is an advantage of using questionnaires?", opts: ["High response rate guaranteed","Suitable only for illiterate respondents","Lower cost and greater anonymity","Requires trained enumerators"], ans: 2 },
+  { ch: 7, q: "A major disadvantage of questionnaires is:", opts: ["They are too expensive to produce","They can only be used for educated and cooperative respondents","Enumerators must always be present","They eliminate interviewer bias"], ans: 1 },
+  { ch: 7, q: "How are schedules different from questionnaires?", opts: ["Schedules are sent by mail to respondents","Schedules are filled in by trained enumerators","Schedules have fewer questions","Schedules are always cheaper"], ans: 1 },
+  { ch: 7, q: "Which data collection method is used in population census?", opts: ["Questionnaire by mail","Interview method","Schedule method with enumerators","Online survey"], ans: 2 },
+  { ch: 7, q: "Secondary data refers to data that:", opts: ["Is collected fresh for a new study","Has already been collected and processed by someone else","Is always more reliable than primary data","Is gathered through direct observation"], ans: 1 },
+  { ch: 7, q: "Which is NOT a source of published secondary data?", opts: ["Government publications","Trade journals","Personal diaries","Books and magazines"], ans: 2 },
+  { ch: 7, q: "The three key features to evaluate secondary data are reliability, suitability, and:", opts: ["Cost","Adequacy","Length","Format"], ans: 1 },
+  { ch: 7, q: "Control questions in a questionnaire are used to:", opts: ["Make the questionnaire longer","Cross-check the accuracy of respondent information","Confuse the respondent","Replace key questions"], ans: 1 },
+  { ch: 7, q: "Open-ended questions in a questionnaire allow respondents to:", opts: ["Choose from fixed alternatives only","Answer in their own words","Skip the question","Select Yes or No"], ans: 1 },
+  { ch: 7, q: "Which factor is NOT mentioned as affecting the choice of data collection method?", opts: ["Nature and scope of enquiry","Availability of funds","Time factor","Researcher's age"], ans: 3 },
+  { ch: 7, q: "Focused interviews aim to:", opts: ["Allow the interviewer to talk freely","Focus attention on a specific experience of the respondent","Replace questionnaires","Avoid any direct questioning"], ans: 1 },
+
+  // ──── CHAPTER 8 ────
+  { ch: 8, q: "Sampling is defined as:", opts: ["Studying the entire population","Selecting a small group from a population to represent the whole","Collecting only secondary data","Testing all members of a group"], ans: 1 },
+  { ch: 8, q: "A sampling frame is:", opts: ["The final conclusions of a study","The list or database from which the sample is drawn","The number of questions in a survey","The method of data analysis"], ans: 1 },
+  { ch: 8, q: "In simple random sampling, every individual has:", opts: ["No chance of being selected","A chance based on their characteristics","An equal chance of being selected","A chance determined by the researcher"], ans: 2 },
+  { ch: 8, q: "In systematic sampling, individuals are chosen:", opts: ["Based on their characteristics","At regular intervals from a list","Only from the first group","Randomly with no set pattern"], ans: 1 },
+  { ch: 8, q: "Stratified sampling involves:", opts: ["Selecting entire clusters randomly","Dividing the population into subgroups and sampling proportionally from each","Choosing whoever is most accessible","Asking participants to recruit others"], ans: 1 },
+  { ch: 8, q: "Cluster sampling differs from stratified sampling because:", opts: ["Cluster sampling is more expensive","Entire clusters are selected rather than individuals from each subgroup","Cluster sampling requires a larger sample","Stratified sampling is non-probability based"], ans: 1 },
+  { ch: 8, q: "Convenience sampling selects participants based on:", opts: ["Random number generation","Expert judgment","Ease of access","Predefined quotas"], ans: 2 },
+  { ch: 8, q: "Snowball sampling is most useful when:", opts: ["The population is very large","The population is hard to reach","A large budget is available","The researcher has a complete list"], ans: 1 },
+  { ch: 8, q: "Purposive sampling is also known as:", opts: ["Quota sampling","Convenience sampling","Judgment sampling","Cluster sampling"], ans: 2 },
+  { ch: 8, q: "In quota sampling, the goal is to:", opts: ["Use random selection only","Ensure certain categories are represented in specific proportions","Include all members of the population","Focus on hard-to-reach groups"], ans: 1 },
+  { ch: 8, q: "Sampling error is caused by:", opts: ["Poor instrument design","Studying only part of the population, not all of it","Incorrect data entry","Bias in question wording"], ans: 1 },
+  { ch: 8, q: "Which of the following reduces sampling error?", opts: ["Using smaller sample sizes","Increasing sample size and using proper random sampling","Using convenience sampling","Avoiding random assignment"], ans: 1 },
+  { ch: 8, q: "Sampling bias occurs because of:", opts: ["Random chance","Poor sampling design that favors certain individuals","Normal variation in data","Using probability sampling"], ans: 1 },
+  { ch: 8, q: "Cronbach's Alpha is used to measure:", opts: ["Sample size","Internal consistency reliability of a questionnaire","The number of survey questions","Population variance"], ans: 1 },
+  { ch: 8, q: "A Cronbach's Alpha of 0.85 indicates:", opts: ["Poor reliability","Questionable reliability","Acceptable reliability","Good reliability"], ans: 3 },
+  { ch: 8, q: "Validity in research refers to:", opts: ["Whether results are consistent over time","Whether a study accurately measures what it is intended to measure","The size of the sample","The cost of the research"], ans: 1 },
+  { ch: 8, q: "Which type of validity checks if a tool covers all aspects of the concept being studied?", opts: ["Criterion Validity","Construct Validity","Content Validity","Face Validity"], ans: 2 },
+  { ch: 8, q: "A non-sampling error is an error caused by:", opts: ["Selecting too small a sample","Problems in data collection, recording, or analysis","Using probability sampling","Having a large population"], ans: 1 },
+  { ch: 8, q: "Which dimension of data quality asks 'Are all necessary data points present?'", opts: ["Accuracy","Timeliness","Completeness","Uniqueness"], ans: 2 },
+  { ch: 8, q: "Which step ensures data quality during the data collection stage?", opts: ["Conducting statistical tests only after data is collected","Using pre-testing and pilot studies to refine instruments","Skipping validation to save time","Avoiding training for data collectors"], ans: 1 },
+];
+
+let currentQuestions = [];
+let currentIndex = 0;
+let score = 0;
+let answered = [];
+let selectedChapter = 'all';
+
+function selectChapter(ch) {
+  selectedChapter = ch;
+  document.querySelectorAll('.tab-btn').forEach((b, i) => {
+    const vals = ['all', 6, 7, 8];
+    b.classList.toggle('active', vals[i] === ch);
+  });
+  startQuiz();
+}
+
+function startQuiz() {
+  currentQuestions = selectedChapter === 'all'
+    ? [...ALL_QUESTIONS]
+    : ALL_QUESTIONS.filter(q => q.ch === selectedChapter);
+  currentIndex = 0;
+  score = 0;
+  answered = new Array(currentQuestions.length).fill(null);
+  renderQuestion();
+}
+
+function renderQuestion() {
+  const area = document.getElementById('quiz-area');
+  if (currentIndex >= currentQuestions.length) {
+    showScore();
+    return;
+  }
+
+  const q = currentQuestions[currentIndex];
+  const total = currentQuestions.length;
+  const pct = Math.round((currentIndex / total) * 100);
+  const labels = ['A', 'B', 'C', 'D'];
+  const chNames = { 6: 'Ch.6 – Research Design', 7: 'Ch.7 – Data Collection', 8: 'Ch.8 – Sampling & Quality' };
+
+  area.innerHTML = `
+    <div class="progress-info">
+      <span>Q ${currentIndex + 1} / ${total}</span>
+      <span>Score: ${score}</span>
+    </div>
+    <div class="progress-bar-wrap">
+      <div class="progress-bar-fill" style="width:${pct}%"></div>
+    </div>
+    <div class="question-card" id="qcard">
+      <div class="chapter-tag">${chNames[q.ch]}</div>
+      <div class="q-number">QUESTION ${currentIndex + 1}</div>
+      <div class="q-text">${q.q}</div>
+      <div class="options" id="opts">
+        ${q.opts.map((o, i) => `
+          <button class="option-btn" id="opt${i}" onclick="selectAnswer(${i})">
+            <span class="opt-label">${labels[i]}</span>
+            ${o}
+          </button>
+        `).join('')}
+      </div>
+    </div>
+    <div class="nav-row">
+      <button class="nav-btn" onclick="prevQ()" ${currentIndex === 0 ? 'disabled' : ''}>← Prev</button>
+      <button class="nav-btn primary" id="nextBtn" onclick="nextQ()" ${answered[currentIndex] === null ? 'disabled' : ''}>
+        ${currentIndex === total - 1 ? 'Finish' : 'Next →'}
+      </button>
+    </div>
+  `;
+
+  // If already answered, restore state
+  if (answered[currentIndex] !== null) {
+    restoreAnswer(q, answered[currentIndex]);
+  }
+}
+
+function selectAnswer(chosen) {
+  if (answered[currentIndex] !== null) return;
+  const q = currentQuestions[currentIndex];
+  answered[currentIndex] = chosen;
+  if (chosen === q.ans) score++;
+  restoreAnswer(q, chosen);
+  document.getElementById('nextBtn').disabled = false;
+}
+
+function restoreAnswer(q, chosen) {
+  const btns = document.querySelectorAll('.option-btn');
+  btns.forEach(b => b.disabled = true);
+  btns[chosen].classList.add(chosen === q.ans ? 'correct' : 'wrong');
+  if (chosen !== q.ans) btns[q.ans].classList.add('show-correct');
+}
+
+function nextQ() {
+  currentIndex++;
+  renderQuestion();
+}
+
+function prevQ() {
+  if (currentIndex > 0) { currentIndex--; renderQuestion(); }
+}
+
+function showScore() {
+  const total = currentQuestions.length;
+  const pct = Math.round((score / total) * 100);
+  let grade, gradeClass;
+  if (pct >= 90) { grade = 'EXCELLENT'; gradeClass = 'grade-a'; }
+  else if (pct >= 75) { grade = 'GOOD'; gradeClass = 'grade-b'; }
+  else if (pct >= 60) { grade = 'PASS'; gradeClass = 'grade-c'; }
+  else { grade = 'NEEDS REVIEW'; gradeClass = 'grade-d'; }
+
+  const chLabel = selectedChapter === 'all' ? 'All Chapters' : `Chapter ${selectedChapter}`;
+
+  document.getElementById('quiz-area').innerHTML = `
+    <div class="score-panel">
+      <h2>Quiz Complete — ${chLabel}</h2>
+      <div class="score-big">${score}/${total}</div>
+      <div class="score-sub">${pct}% correct</div>
+      <div class="score-grade ${gradeClass}">${grade}</div>
+      <br>
+      <button class="retry-btn" onclick="startQuiz()">↺ Retry</button>
+    </div>
+  `;
+}
+
+// init
+startQuiz();
+</script>
+</body>
+</html>
